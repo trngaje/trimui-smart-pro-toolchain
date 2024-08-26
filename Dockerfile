@@ -1,7 +1,7 @@
-FROM debian:bullseye-slim
+FROM golang:1.22.6-bullseye
 ENV DEBIAN_FRONTEND noninteractive
 
-ENV TZ=America/New_York
+ENV TZ=America/Sao_Paulo
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 RUN apt-get -y update && apt-get -y install \
