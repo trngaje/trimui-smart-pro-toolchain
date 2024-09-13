@@ -26,7 +26,7 @@ shell: .check .build
 ifdef PODMAN
 	$(TOOL) run -it --rm -v /"$(WORKSPACE_DIR)":/root/workspace:z $(TOOLCHAIN_NAME) bash
 else
-	$(TOOL) run -it --rm -v /"$(WORKSPACE_DIR)":/root/workspace $(TOOLCHAIN_NAME) bash
+	$(TOOL) run -it --rm --name="$(TOOLCHAIN_NAME)" -v /"$(WORKSPACE_DIR)":/root/workspace $(TOOLCHAIN_NAME) bash
 endif
 
 clean: .check
