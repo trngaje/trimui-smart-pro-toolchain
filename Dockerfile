@@ -1,7 +1,5 @@
 FROM debian:bullseye-slim
 
-LABEL maintainer="Aníbal Deboni Neto <anibaldeboni@gmail.com>"
-
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Set timezone
@@ -27,6 +25,7 @@ RUN dpkg --add-architecture arm64 && \
         libegl1-mesa-dev \
         libgles2-mesa-dev \
         pkg-config \
+        zip \
         && rm -rf /var/lib/apt/lists/*
 
 # Install Go 1.23
@@ -54,7 +53,7 @@ ENV SYSROOT="/usr/local/aarch64-linux-gnu-7.5.0-linaro/sysroot"
 
 ENV CC="/usr/local/aarch64-linux-gnu-7.5.0-linaro/bin/aarch64-linux-gnu-gcc --sysroot=${SYSROOT} -I${SYSROOT}/usr/include"
 
-# Download and build SDL2 using CMake
+# Download and build SDL2
 RUN wget https://github.com/trimui/toolchain_sdk_smartpro/releases/download/20231018/SDL2-2.26.1.GE8300.tgz && \
     tar -xzf SDL2-2.26.1.GE8300.tgz -C /tmp && \
     cd /tmp/SDL2-2.26.1 && \
