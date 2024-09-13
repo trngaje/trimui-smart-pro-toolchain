@@ -25,4 +25,4 @@ This image is still not running properly on Mac (M1) the SDL2 build proccess fai
 
 ## Using with GitHub Actions
 
-Here's an example of how to integrate this image on a GitHub release action: [https://github.com/anibaldeboni/screech/blob/master/.github/workflows/release.yml](https://github.com/anibaldeboni/screech/blob/master/.github/workflows/release.yml)
+Here's an example of how to integrate this image on a GitHub release workflow: [https://github.com/anibaldeboni/screech/blob/master/.github/workflows/release.yml](https://github.com/anibaldeboni/screech/blob/master/.github/workflows/release.yml)
