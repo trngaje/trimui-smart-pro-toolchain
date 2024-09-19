@@ -25,7 +25,7 @@ RUN dpkg --add-architecture arm64 && \
         libgles2-mesa-dev \
         pkg-config \
         zip \
-        && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/*
 
 # Install Go 1.23
 RUN wget https://go.dev/dl/go1.23.1.linux-amd64.tar.gz && \
@@ -55,13 +55,14 @@ ENV CC="/usr/local/aarch64-linux-gnu-7.5.0-linaro/bin/aarch64-linux-gnu-gcc --sy
 # Download and build SDL2
 RUN wget https://github.com/trimui/toolchain_sdk_smartpro/releases/download/20231018/SDL2-2.26.1.GE8300.tgz && \
     tar -xzf SDL2-2.26.1.GE8300.tgz -C /tmp && \
-    /tmp/SDL2-2.26.1/configure --host=aarch64-linux-gnu \
-                               --prefix=/usr \
-                               --disable-video-wayland \
-                               --disable-pulseaudio \
-                               --with-sysroot=${SYSROOT} && \
-    make -C /tmp/SDL2-2.26.1 && \
-    make -C /tmp/SDL2-2.26.1 install && \
+    cd /tmp/SDL2-2.26.1 && \
+    ./configure --host=aarch64-linux-gnu \
+                --prefix=/usr \
+                --disable-video-wayland \
+                --disable-pulseaudio \
+                --with-sysroot=${SYSROOT} && \
+    make && \
+    make install && \
     rm -rf /tmp/SDL2-2.26.1 SDL2-2.26.1.GE8300.tgz
 
 # Set PKG_CONFIG_PATH to include SDL2 directories
