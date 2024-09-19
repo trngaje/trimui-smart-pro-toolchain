@@ -12,7 +12,6 @@ RUN dpkg --add-architecture arm64 && \
         wget \
         build-essential \
         ca-certificates \
-        cmake \
         linux-libc-dev-arm64-cross \
         libc6-arm64-cross \
         libc6-dev-arm64-cross \
@@ -56,14 +55,13 @@ ENV CC="/usr/local/aarch64-linux-gnu-7.5.0-linaro/bin/aarch64-linux-gnu-gcc --sy
 # Download and build SDL2
 RUN wget https://github.com/trimui/toolchain_sdk_smartpro/releases/download/20231018/SDL2-2.26.1.GE8300.tgz && \
     tar -xzf SDL2-2.26.1.GE8300.tgz -C /tmp && \
-    cd /tmp/SDL2-2.26.1 && \
-    ./configure --host=aarch64-linux-gnu \
-                --prefix=/usr \
-                --disable-video-wayland \
-                --disable-pulseaudio \
-                --with-sysroot=${SYSROOT} && \
-    make && \
-    make install && \
+    /tmp/SDL2-2.26.1/configure --host=aarch64-linux-gnu \
+                               --prefix=/usr \
+                               --disable-video-wayland \
+                               --disable-pulseaudio \
+                               --with-sysroot=${SYSROOT} && \
+    make -C /tmp/SDL2-2.26.1 && \
+    make -C /tmp/SDL2-2.26.1 install && \
     rm -rf /tmp/SDL2-2.26.1 SDL2-2.26.1.GE8300.tgz
 
 # Set PKG_CONFIG_PATH to include SDL2 directories
@@ -83,8 +81,8 @@ ENV CGO_ENABLED="1"
 ENV CGO_LDFLAGS="-L${SYSROOT}/usr/lib  -L/usr/lib/aarch64-linux-gnu -lSDL2_image -lSDL2_ttf -lSDL2 -ldl -lpthread -lm"
 ENV CGO_CFLAGS="-I${SYSROOT}/usr/include -I/usr/aarch64-linux-gnu/include -I/usr/aarch64-linux-gnu/include/SDL2 -I/usr/include/SDL2 -D_REENTRANT"
 
-RUN mkdir -p /root/workspace
-WORKDIR /root
+RUN useradd -m toolchain
+USER toolchain
+RUN mkdir -p /home/toolchain/workspace
 
-VOLUME /root/workspace
-WORKDIR /root/workspace
+WORKDIR /home/toolchain/workspace

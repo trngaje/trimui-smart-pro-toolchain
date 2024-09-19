@@ -3,6 +3,7 @@
 	
 TOOLCHAIN_NAME=trimui-smart-pro-toolchain
 WORKSPACE_DIR := $(shell pwd)/workspace
+WORKSPACE_VOLUME := /home/toolchain/workspace
 TOOL=
 DOCKER := $(shell command -v docker 2> /dev/null)
 PODMAN := $(shell command -v podman 2> /dev/null)
@@ -21,12 +22,11 @@ endif
 	$(TOOL) build -t $(TOOLCHAIN_NAME) .
 	touch .build
 
-# additional slash at beginning is a hack to work in Windows + Git Bash
 shell: .check .build
 ifdef PODMAN
-	$(TOOL) run -it --rm -v /"$(WORKSPACE_DIR)":/root/workspace:z $(TOOLCHAIN_NAME) bash
+	$(TOOL) run -it --rm -v /"$(WORKSPACE_DIR)":"$(WORKSPACE_VOLUME)":z $(TOOLCHAIN_NAME) bash
 else
-	$(TOOL) run -it --rm --name="$(TOOLCHAIN_NAME)" -v /"$(WORKSPACE_DIR)":/root/workspace $(TOOLCHAIN_NAME) bash
+	$(TOOL) run -it --rm --name="$(TOOLCHAIN_NAME)" -v /"$(WORKSPACE_DIR)":"$(WORKSPACE_VOLUME)" $(TOOLCHAIN_NAME) bash
 endif
 
 clean: .check
