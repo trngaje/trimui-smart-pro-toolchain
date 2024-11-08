@@ -12,18 +12,15 @@ RUN dpkg --add-architecture arm64 && \
         wget \
         build-essential \
         ca-certificates \
+        libc6 \
+        libc6-dev \
+        qemu \
+        qemu-user-static \
+        binfmt-support \
         linux-libc-dev-arm64-cross \
         libc6-arm64-cross \
         libc6-dev-arm64-cross \
         binutils-aarch64-linux-gnu \
-        libsdl2-gfx-dev:arm64 \
-        libsdl2-image-dev:arm64 \
-        libsdl2-mixer-dev:arm64 \
-        libsdl2-net-dev:arm64 \
-        libsdl2-ttf-dev:arm64 \
-        libegl1-mesa-dev \
-        libgles2-mesa-dev \
-        pkg-config \
         zip \
     && rm -rf /var/lib/apt/lists/*
 
@@ -34,39 +31,12 @@ RUN wget https://go.dev/dl/go1.23.1.linux-amd64.tar.gz && \
 
 ENV PATH="/usr/local/go/bin:${PATH}"
 
-# Download and install Linaro toolchain
-RUN wget https://github.com/trimui/toolchain_sdk_smartpro/releases/download/20231018/aarch64-linux-gnu-7.5.0-linaro.tgz && \
-    tar -C /usr/local -xzf aarch64-linux-gnu-7.5.0-linaro.tgz && \
-    rm aarch64-linux-gnu-7.5.0-linaro.tgz
+RUN wget https://github.com/pthalin/SDK_Trimui_Smart_Pro/releases/download/SDK_with_sysroot_Trimui_Smart_Pro_20231018_patched/SDK_with_sysroot_Trimui_Smart_Pro_20231018_patched.tar.gz && \
+    tar -C / -xzf SDK_with_sysroot_Trimui_Smart_Pro_20231018_patched.tar.gz && \
+    rm SDK_with_sysroot_Trimui_Smart_Pro_20231018_patched.tar.gz
 
-# Download and install additional libc files
-RUN wget https://github.com/trimui/toolchain_sdk_smartpro/releases/download/20231018/SDK_usr_tg5040_a133p.tgz && \
-    tar -xzf SDK_usr_tg5040_a133p.tgz -C /tmp && \
-    mkdir -p /usr/local/aarch64-linux-gnu-7.5.0-linaro/sysroot/usr && \
-    cp -r /usr/local/aarch64-linux-gnu-7.5.0-linaro/aarch64-linux-gnu/libc/* /usr/local/aarch64-linux-gnu-7.5.0-linaro/sysroot && \
-    cp -r /tmp/usr/* /usr/local/aarch64-linux-gnu-7.5.0-linaro/sysroot/usr/ && \
-    rm -rf SDK_usr_tg5040_a133p.tgz /tmp/usr
-
-ENV PATH="/usr/local/aarch64-linux-gnu-7.5.0-linaro/bin:${PATH}"
-ENV SYSROOT="/usr/local/aarch64-linux-gnu-7.5.0-linaro/sysroot"
-
-ENV CC="/usr/local/aarch64-linux-gnu-7.5.0-linaro/bin/aarch64-linux-gnu-gcc --sysroot=${SYSROOT} -I${SYSROOT}/usr/include"
-
-# Download and build SDL2
-RUN wget https://github.com/trimui/toolchain_sdk_smartpro/releases/download/20231018/SDL2-2.26.1.GE8300.tgz && \
-    tar -xzf SDL2-2.26.1.GE8300.tgz -C /tmp && \
-    cd /tmp/SDL2-2.26.1 && \
-    ./configure --host=aarch64-linux-gnu \
-                --prefix=/usr \
-                --disable-video-wayland \
-                --disable-pulseaudio \
-                --with-sysroot=${SYSROOT} && \
-    make && \
-    make install && \
-    rm -rf /tmp/SDL2-2.26.1 SDL2-2.26.1.GE8300.tgz
-
-# Set PKG_CONFIG_PATH to include SDL2 directories
-ENV PKG_CONFIG_PATH="/usr/aarch64-linux-gnu/lib/pkgconfig:/usr/lib/aarch64-linux-gnu/pkgconfig:${SYSROOT}/usr/lib/pkgconfig"
+ENV PATH="/opt/aarch64-linux-gnu-7.5.0-linaro/bin:${PATH}"
+ENV SYSROOT="/opt/aarch64-linux-gnu-7.5.0-linaro/sysroot"
 
 # Set environment variables for cross-compilation
 ENV CC="aarch64-linux-gnu-gcc --sysroot=${SYSROOT}"
