@@ -3,7 +3,7 @@ FROM debian:bullseye-slim
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Set timezone
-ENV TZ=America/Sao_Paulo
+ENV ENV TZ=Asia/Seoul
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 # Install dependencies and update CA certificates
@@ -25,6 +25,8 @@ RUN dpkg --add-architecture arm64 && \
         libgles2-mesa-dev \
         pkg-config \
         zip \
+	nano \
+	sudo \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Go 1.23
@@ -83,7 +85,13 @@ ENV CGO_LDFLAGS="-L${SYSROOT}/usr/lib  -L/usr/lib/aarch64-linux-gnu -lSDL2_image
 ENV CGO_CFLAGS="-I${SYSROOT}/usr/include -I/usr/aarch64-linux-gnu/include -I/usr/aarch64-linux-gnu/include/SDL2 -I/usr/include/SDL2 -D_REENTRANT"
 
 RUN useradd -m toolchain
+RUN usermod -s /bin/bash toolchain
+ENV SHELL /bin/bash
+ENV HOME /home/toolchain
+RUN echo "toolchain ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 USER toolchain
 RUN mkdir -p /home/toolchain/workspace
+
+ENV EDITOR nano
 
 WORKDIR /home/toolchain/workspace
